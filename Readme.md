@@ -11,6 +11,13 @@ $ npm install koa-router-parser
 ```js
 const parser = require('koa-router-parser');
 const Koa = require('koa');
+
+// add default middleware, common is for all type
+parser.addDefault('common', (ctx, next) => {
+	console.info(ctx.url);
+	return next();
+});
+
 parser.add('getUser', (ctx, next) => {
 	const id = ctx.params.id;
 	const getUser = new Promise(resolve => {

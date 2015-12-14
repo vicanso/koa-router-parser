@@ -177,7 +177,7 @@ describe('koa-router-parser', () => {
 			return getFavorites;
 		});
 
-		const router = parser.parse('GET /user/favorites/:id getUser,getFavorites')
+		const router = parser.parse('GET /user/favorites/:id getUser,getFavorites');
 		const app = new Koa();
 		app.use(router.routes());
 		request(app.listen())
@@ -191,6 +191,49 @@ describe('koa-router-parser', () => {
 				done();
 			});
 
+	});
+
+	it('should parse function with defaultMiddlewares successful', done => {
+
+		parser.addDefault('common', (ctx, next) => {
+			assert.equal(ctx.url, '/user');
+			return next();
+		});
+
+		parser.add('user', ctx => {
+			ctx.body = {
+				name: 'vicanso'
+			};
+		});
+
+
+		const router = parser.parse('GET,POST /user user');
+		const app = new Koa();
+		const server = app.listen();
+		let finishedCount = 0;
+		const finish = (err, res) => {
+			if (err) {
+				return done(err);
+			}
+			assert.equal(res.body.name, 'vicanso');
+
+			finishedCount++;
+			if (finishedCount === 2) {
+				done();
+			}
+		};
+		app.use(router.routes());
+
+		request(server)
+			.get('/user')
+			.end(finish);
+
+		request(server)
+			.post('/user')
+			.send({
+				name: 'vicanso'
+			})
+			.end(finish);
 	});
 
 });
