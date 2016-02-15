@@ -1,7 +1,7 @@
 {
 	"name": "koa-router-parser",
 	"description": "router parser for koa",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"author": {
 		"name": "vicanso 小墨鱼",
 		"email": "vicansocanbico@gmail.com"
@@ -15,11 +15,15 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/vicanso/koa-router-parser.git"
+		"url": "git+https://github.com/vicanso/koa-router-parser.git"
+	},
+	"bugs": {
+		"url": "https://github.com/vicanso/koa-connection-limit/issues",
+		"email": "vicansocanbico@gmail.com"
 	},
 	"readmeFilename": "README.md",
 	"scripts": {
-		"test": "make test"
+		"test": "node ./node_modules/.bin/jshint lib/*.js && NODE_ENV=test node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test/*.js --"
 	},
 	"devDependencies": {
 		"istanbul": "^0.4.1",
