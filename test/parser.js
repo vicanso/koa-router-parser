@@ -36,15 +36,6 @@ describe('koa-router-parser', () => {
 		}
 	});
 
-	it('should throw error when method is invalid', done => {
-		try {
-			parser.parse('GT /user user');
-		} catch (err) {
-			assert.equal(err.message, 'gt is not support');
-			done();
-		}
-	});
-
 	it('should parse router successful', done => {
 		parser.add('user', (ctx) => {
 			ctx.body = {

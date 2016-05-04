@@ -1,40 +1,41 @@
 {
-	"name": "koa-router-parser",
-	"description": "router parser for koa",
-	"version": "2.0.2",
-	"author": {
-		"name": "vicanso 小墨鱼",
-		"email": "vicansocanbico@gmail.com"
-	},
-	"keywords": [
-		"koa",
-		"router parser",
-		"router"
-	],
-	"main": "./lib/parser.js",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/vicanso/koa-router-parser.git"
-	},
-	"bugs": {
-		"url": "https://github.com/vicanso/koa-connection-limit/issues",
-		"email": "vicansocanbico@gmail.com"
-	},
-	"readmeFilename": "README.md",
-	"scripts": {
-		"test": "node ./node_modules/.bin/jshint lib/*.js && NODE_ENV=test node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha test/*.js --"
-	},
-	"devDependencies": {
-		"istanbul": "^0.4.1",
-		"jshint": "^2.8.0",
-		"koa": "^2.0.0-alpha.3",
-		"mocha": "^2.3.4",
-		"supertest": "^1.1.0"
-	},
-	"readme": "router parser for koa",
-	"dependencies": {
-		"debug": "^2.2.0",
-		"koa-router": "^7.0.0"
-	}
+  "name": "koa-router-parser",
+  "description": "router parser for koa",
+  "version": "2.0.3",
+  "author": "Tree Xie <vicansocanbico@gmail.com>",
+  "keywords": [
+    "koa",
+    "router parser",
+    "router"
+  ],
+  "main": "./lib/parser.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vicanso/koa-router-parser.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vicanso/koa-router-parser/issues",
+    "email": "vicansocanbico@gmail.com"
+  },
+  "readmeFilename": "Readme.md",
+  "scripts": {
+    "test": "node ./node_modules/.bin/eslint ./lib/*.js && NODE_ENV=test node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha ./test/*.js --"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^2.9.0",
+    "eslint-config-airbnb": "^8.0.0",
+    "eslint-plugin-import": "^1.6.1",
+    "istanbul": "^0.4.3",
+    "koa": "^2.0.0",
+    "mocha": "^2.4.5",
+    "supertest": "^1.2.0"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "koa-router": "^7.0.1"
+  }
 }
