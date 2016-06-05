@@ -51,11 +51,22 @@ parser.add('getFavorites', (ctx) => {
   return getFavorites;
 });
 
-const router = parser.parse('GET /user/favorites/:id getUser,getFavorites')
+parser.add('check-version', (version) => {
+  return (ctx, next) => {
+    const v = parseInt(ctx.query.version);
+    if (v === version) {
+      return next();
+    } else {
+      throw new Error('version is wrong');
+    }
+  };
+});
+
+const router = parser.parse('GET /user/favorites/:id check-version(1)&getUser&getFavorites')
 const app = new Koa();
 app.use(router.routes());
 request(app.listen())
-  .get('/user/favorites/1234')
+  .get('/user/favorites/1234?version=1')
   .end((err, res) => {
     if (err) {
       console.error(err);
