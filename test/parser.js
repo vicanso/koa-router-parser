@@ -96,7 +96,7 @@ describe('koa-router-parser', () => {
 
   it('should throw error when parse desc is invalid', done => {
     try {
-      parser.parse('GET /');
+      parser.parse('[GET] [/]');
     } catch (err) {
       assert.equal(err.message, 'desc is invalid');
       done();
@@ -105,7 +105,7 @@ describe('koa-router-parser', () => {
 
   it('should parse router successful', done => {
 
-    const router = parser.parse('GET /user user');
+    const router = parser.parse('[GET] [/user] [user]');
     const app = new Koa();
     app.use(router.routes());
 
@@ -121,7 +121,7 @@ describe('koa-router-parser', () => {
   });
 
   it('should parse get,post router successful', done => {
-    const router = parser.parse('GET|POST /user user');
+    const router = parser.parse('[GET,POST] [/user] [user]');
     const app = new Koa();
     const server = app.listen();
     let finishedCount = 0;
@@ -152,7 +152,7 @@ describe('koa-router-parser', () => {
 
 
   it('should parse /user /user/:id router successful', done => {
-    const router = parser.parse('GET /user|/user/:id user');
+    const router = parser.parse('[GET] [/user,/user/:id] [user]');
     const app = new Koa();
     const server = app.listen();
     let finishedCount = 0;
@@ -179,7 +179,7 @@ describe('koa-router-parser', () => {
   });
 
   it('should parse multi middleware successful', done => {
-    const router = parser.parse('GET /user/favorites/:id getUser&getFavorites');
+    const router = parser.parse('[GET] [/user/favorites/:id] [getUser&getFavorites]');
     const app = new Koa();
     app.use(router.routes());
     request(app.listen())
@@ -192,12 +192,34 @@ describe('koa-router-parser', () => {
         assert.equal(res.body.length, 2);
         done();
       });
+  });
 
+  it('should parse an object successful', done => {
+    const router = parser.parse({
+      methods: ['GET'],
+      urls: ['/user/favorites/:id'],
+      handlers: ['getUser', (ctx, next) => {
+        assert.equal(ctx.params.id, '1234');
+        return next();
+      }, 'getFavorites'],
+    });
+    const app = new Koa();
+    app.use(router.routes());
+    request(app.listen())
+      .get('/user/favorites/1234')
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        assert.equal(res.status, 200);
+        assert.equal(res.body.length, 2);
+        done();
+      });
   });
 
   it('should parse function with defaultMiddlewares successful', done => {
 
-    const router = parser.parse('GET|POST /user user');
+    const router = parser.parse('[GET,POST] [/user] [user]');
     const app = new Koa();
     const server = app.listen();
     let finishedCount = 0;
@@ -232,7 +254,7 @@ describe('koa-router-parser', () => {
   });
 
   it('should parse function with params successful', done => {
-    const router = parser.parse('GET /user check-version(1)&check-name("vicanso")&check-options({"tag":"a"},1)&user');
+    const router = parser.parse('[GET] [/user] [check-version(1)&check-name("vicanso")&check-options({"tag":"a"},1)& user]');
 
     const app = new Koa();
     app.use(router.routes());
