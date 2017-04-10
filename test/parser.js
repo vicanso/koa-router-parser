@@ -45,9 +45,8 @@ describe('koa-router-parser', () => {
       const v = parseInt(ctx.query.version);
       if (v === version) {
         return next();
-      } else {
-        throw new Error('version is wrong');
       }
+      throw new Error('version is wrong');
     };
   });
 
@@ -55,9 +54,8 @@ describe('koa-router-parser', () => {
     return (ctx, next) => {
       if (ctx.query.name === name) {
         return next();
-      } else {
-        throw new Error('name is wrong');
       }
+      throw new Error('name is wrong');
     };
   });
 
@@ -66,12 +64,19 @@ describe('koa-router-parser', () => {
       const v = parseInt(ctx.query.version);
       if (v == version && ctx.query.tag === options.tag) {
         return next();
-      } else {
-        throw new Error('check options fail');
       }
+      throw new Error('check options fail');
     };
   });
 
+  parser.add('types', (types) => {
+    return (ctx, next) => {
+      if (types.indexOf(ctx.get('Accept')) !== -1) {
+        return next();
+      }
+      throw new Error('type is invalid');
+    };
+  });
 
 
   it('should add router handler successful', (done) => {
@@ -254,13 +259,14 @@ describe('koa-router-parser', () => {
   });
 
   it('should parse function with params successful', done => {
-    const router = parser.parse('[GET] [/user] [check-version(1)&check-name("vicanso")&check-options({"tag":"a"},1)& user]');
+    const router = parser.parse('[GET] [/user] [types(["xml", "json"]) & check-version(1) & check-name("vicanso") & check-options({"tag":"a"},1) & user]');
 
     const app = new Koa();
     app.use(router.routes());
 
     request(app.listen())
       .get('/user?version=1&name=vicanso&tag=a')
+      .set('Accept', 'json')
       .end((err, res) => {
         if (err) {
           return done(err);
@@ -268,6 +274,6 @@ describe('koa-router-parser', () => {
         assert.equal(res.body.name, 'vicanso');
         done();
       });
-  })
+  });
 
 });

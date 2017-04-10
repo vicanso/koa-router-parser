@@ -62,7 +62,7 @@ parser.add('check-version', (version) => {
   };
 });
 
-const router = parser.parse(['[GET,POST] [/user/favorites/:id,/user/:id] [check-version(1) & getUser&getFavorites]', {
+const router = parser.parse(['[GET,POST] [/user/favorites/:id,/user/:id] [check-version(1) & getUser & getFavorites]', {
   methods: ['GET'],
   urls: ['/user/me'],
   handlers: ['getUser'],
