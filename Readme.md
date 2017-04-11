@@ -62,11 +62,24 @@ parser.add('check-version', (version) => {
   };
 });
 
-const router = parser.parse(['[GET,POST] [/user/favorites/:id,/user/:id] [check-version(1) & getUser & getFavorites]', {
-  methods: ['GET'],
-  urls: ['/user/me'],
-  handlers: ['getUser'],
-});
+const router = parser.parse([
+  '[GET,POST] [/user/favorites/:id,/user/:id] [check-version(1) & getUser & getFavorites]',
+  {
+    methods: ['GET'],
+    urls: ['/user/me'],
+    handlers: ['getUser'],
+  },
+  [
+    ['GET', 'POST'],
+    ['/user/favorites/:id', '/user/:id'],
+    [
+      (ctx, next) => next(),
+      'check-version(1)',
+      'getUser',
+      'getFavorites',
+    ],
+  ],
+]);
 const app = new Koa();
 app.use(router.routes());
 request(app.listen())

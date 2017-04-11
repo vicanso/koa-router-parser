@@ -13,8 +13,7 @@ describe('koa-router-parser', () => {
   });
 
   parser.add('getUser', (ctx, next) => {
-    const id = ctx.params.id;
-    const getUser = new Promise(resolve => {
+    const getUser = new Promise((resolve) => {
       setTimeout(() => {
         ctx.user = {
           name: 'vicanso'
@@ -26,8 +25,7 @@ describe('koa-router-parser', () => {
   });
 
   parser.add('getFavorites', (ctx) => {
-    const user = ctx.user;
-    const getFavorites = new Promise(resolve => {
+    const getFavorites = new Promise((resolve) => {
       setTimeout(() => {
         ctx.body = [{
           name: 'javascript'
@@ -42,7 +40,7 @@ describe('koa-router-parser', () => {
 
   parser.add('check-version', (version) => {
     return (ctx, next) => {
-      const v = parseInt(ctx.query.version);
+      const v = parseInt(ctx.query.version, 10);
       if (v === version) {
         return next();
       }
@@ -62,7 +60,7 @@ describe('koa-router-parser', () => {
   parser.add('check-options', (options, version) => {
     return (ctx, next) => {
       const v = parseInt(ctx.query.version);
-      if (v == version && ctx.query.tag === options.tag) {
+      if (v === version && ctx.query.tag === options.tag) {
         return next();
       }
       throw new Error('check options fail');
@@ -90,7 +88,7 @@ describe('koa-router-parser', () => {
     done();
   });
 
-  it('should throw error when parse desc is null', done => {
+  it('should throw error when parse desc is null', (done) => {
     try {
       parser.parse();
     } catch (err) {
@@ -99,16 +97,16 @@ describe('koa-router-parser', () => {
     }
   });
 
-  it('should throw error when parse desc is invalid', done => {
+  it('should throw error when parse desc is invalid', (done) => {
     try {
       parser.parse('[GET] [/]');
     } catch (err) {
-      assert.equal(err.message, 'desc is invalid');
+      assert.equal(err.message, '[GET] [/] is invalid');
       done();
     }
   });
 
-  it('should parse router successful', done => {
+  it('should parse router successful', (done) => {
 
     const router = parser.parse('[GET] [/user] [user]');
     const app = new Koa();
@@ -118,21 +116,23 @@ describe('koa-router-parser', () => {
       .get('/user')
       .end((err, res) => {
         if (err) {
-          return done(err);
+          done(err);
+          return;
         }
         assert.equal(res.body.name, 'vicanso');
         done();
       });
   });
 
-  it('should parse get,post router successful', done => {
+  it('should parse get,post router successful', (done) => {
     const router = parser.parse('[GET,POST] [/user] [user]');
     const app = new Koa();
     const server = app.listen();
     let finishedCount = 0;
     const finish = (err, res) => {
       if (err) {
-        return done(err);
+        done(err);
+        return;
       }
       assert.equal(res.body.name, 'vicanso');
 
@@ -156,14 +156,15 @@ describe('koa-router-parser', () => {
   });
 
 
-  it('should parse /user /user/:id router successful', done => {
+  it('should parse /user /user/:id router successful', (done) => {
     const router = parser.parse('[GET] [/user,/user/:id] [user]');
     const app = new Koa();
     const server = app.listen();
     let finishedCount = 0;
     const finish = (err, res) => {
       if (err) {
-        return done(err);
+        done(err);
+        return;
       }
       assert.equal(res.body.name, 'vicanso');
 
@@ -183,7 +184,7 @@ describe('koa-router-parser', () => {
       .end(finish);
   });
 
-  it('should parse multi middleware successful', done => {
+  it('should parse multi middleware successful', (done) => {
     const router = parser.parse('[GET] [/user/favorites/:id] [getUser&getFavorites]');
     const app = new Koa();
     app.use(router.routes());
@@ -191,7 +192,8 @@ describe('koa-router-parser', () => {
       .get('/user/favorites/1234')
       .end((err, res) => {
         if (err) {
-          return done(err);
+          done(err);
+          return;
         }
         assert.equal(res.status, 200);
         assert.equal(res.body.length, 2);
@@ -199,7 +201,7 @@ describe('koa-router-parser', () => {
       });
   });
 
-  it('should parse an object successful', done => {
+  it('should parse an object successful', (done) => {
     const router = parser.parse({
       methods: ['GET'],
       urls: ['/user/favorites/:id'],
@@ -214,7 +216,8 @@ describe('koa-router-parser', () => {
       .get('/user/favorites/1234')
       .end((err, res) => {
         if (err) {
-          return done(err);
+          done(err);
+          return;
         }
         assert.equal(res.status, 200);
         assert.equal(res.body.length, 2);
@@ -222,7 +225,7 @@ describe('koa-router-parser', () => {
       });
   });
 
-  it('should parse function with defaultMiddlewares successful', done => {
+  it('should parse function with defaultMiddlewares successful', (done) => {
 
     const router = parser.parse('[GET,POST] [/user] [user]');
     const app = new Koa();
@@ -230,7 +233,8 @@ describe('koa-router-parser', () => {
     let finishedCount = 0;
     const finish = (err, res) => {
       if (err) {
-        return done(err);
+        done(err);
+        return;
       }
       assert.equal(res.body.name, 'vicanso');
 
@@ -253,12 +257,12 @@ describe('koa-router-parser', () => {
     request(server)
       .post('/user')
       .send({
-        name: 'vicanso'
+        name: 'vicanso',
       })
       .end(finish);
   });
 
-  it('should parse function with params successful', done => {
+  it('should parse function with params successful', (done) => {
     const router = parser.parse('[GET] [/user] [types(["xml", "json"]) & check-version(1) & check-name("vicanso") & check-options({"tag":"a"},1) & user]');
 
     const app = new Koa();
@@ -269,11 +273,64 @@ describe('koa-router-parser', () => {
       .set('Accept', 'json')
       .end((err, res) => {
         if (err) {
-          return done(err);
+          done(err);
+          return;
         }
         assert.equal(res.body.name, 'vicanso');
         done();
       });
   });
 
+  it('should parse function using array successful', (done) => {
+    const router = parser.parse([
+      ['[GET]', '[/user]', '[types(["xml", "json"]) & check-version(1) & check-name("vicanso") & check-options({"tag":"a"},1) & user]']
+    ]);
+
+    const app = new Koa();
+    app.use(router.routes());
+
+    request(app.listen())
+      .get('/user?version=1&name=vicanso&tag=a')
+      .set('Accept', 'json')
+      .end((err, res) => {
+        if (err) {
+          done(err);
+          return;
+        }
+        assert.equal(res.body.name, 'vicanso');
+        done();
+      });
+  });
+
+  it('should parse function using array params successful', (done) => {
+    const router = parser.parse([
+      [
+        ['GET'],
+        ['/user'],
+        [
+          (ctx, next) => next(),
+          'types(["xml", "json"])',
+          'check-version(1)',
+          'check-name("vicanso")',
+          'check-options({"tag":"a"},1)',
+          'user',
+        ],
+      ],
+    ]);
+
+    const app = new Koa();
+    app.use(router.routes());
+
+    request(app.listen())
+      .get('/user?version=1&name=vicanso&tag=a')
+      .set('Accept', 'json')
+      .end((err, res) => {
+        if (err) {
+          done(err);
+          return;
+        }
+        assert.equal(res.body.name, 'vicanso');
+        done();
+      });
+  });
 });
