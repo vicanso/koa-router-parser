@@ -283,7 +283,7 @@ describe('koa-router-parser', () => {
 
   it('should parse function using array successful', (done) => {
     const router = parser.parse([
-      ['[GET]', '[/user]', '[types(["xml", "json"]) & check-version(1) & check-name("vicanso") & check-options({"tag":"a"},1) & user]']
+      ['GET', '[/user]', '[types(["xml", "json"]) & check-version(1) & check-name("vicanso") & check-options({"tag":"a"},1) & user]']
     ]);
 
     const app = new Koa();
@@ -306,7 +306,7 @@ describe('koa-router-parser', () => {
     const router = parser.parse([
       [
         ['GET'],
-        ['/user'],
+        '/user',
         [
           (ctx, next) => next(),
           'types(["xml", "json"])',

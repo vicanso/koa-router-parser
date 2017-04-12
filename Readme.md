@@ -79,6 +79,13 @@ const router = parser.parse([
       'getFavorites',
     ],
   ],
+  [
+    'GET',
+    '/users',
+    [
+      'getUser',
+    ],
+  ],
 ]);
 const app = new Koa();
 app.use(router.routes());
