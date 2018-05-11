@@ -9,6 +9,9 @@ node_js:
   - "5"
   - "4"
 
+before_script:
+  - npm i yarn -g
+
 script:
   - npm test
 
